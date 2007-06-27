@@ -1,0 +1,53 @@
+Thank you for downloading the analytic infall models. These models are
+discussed in detail in De Vries & Myers (2005). More documentation and updates
+are available from http://cfa-www.harvard.edu/~cdevries/analytic_infall.html
+. Although this paper includes all the analytic models discussed in the paper,
+I would restrict myself to the HILL5 and TWOLAYER6 models, which were found to
+be the best models. 
+
+In order to fit a spectrum you need to place it in a two column text format
+(the first column should be velocity in kilmeters per second, and the second
+should be brightness temperature in Kelvins). Lines that begin with a hash mark
+'#' will be ignored. Use the hybrid version of the model you want to run, this
+will allow for some slow differential evolution minimization which will
+(hopefully) find the global minimum well followed by Nelder-Mead simplex
+minimization which will quickly find the bottom of that well. The hybrid
+programs of interest are "hill5_hybrid" and "twolayer6_hybrid". The arguments
+to both programs are:
+
+1. input filename  --- the file with your spectrum
+2. frequency --- to perform the J(T) conversion. A frequency of 0 will work in
+		 units of J(T) instead of T.
+3. vmin --- minimum velocity of the line profile.
+4. vmax --- maximum velocity of the line profile. Be sure to get the entire
+	    line full width as well as a little baseline. This is the region
+	    over which chi-squared is calculated, so artifacts of the fit can
+	    sometimes appear outside this region.
+5. population in generation --- The number of solutions to calculate each
+				generation of the differential evolution. I
+				usually use about 200-300 here.
+6. generations per check --- The number of generations to run before checking
+			     for convergence in the differential evolution. I
+			     usually pick 300 here.
+7. checks to convergence --- The number of checks to make before deciding the
+			     differential evolution algorithm has converged. I
+			     usually pick 3 to 5 here. 
+8. output file --- Where to place the fit and parameters.
+
+The output file will have a header line the following (a HILL 5 example is
+shown):
+
+# Tau:   4.46394
+# Vlsr:  0.000296732
+# Vin:   0.0993918
+# sigma: 0.0937655
+# Tpeak: 10.5371
+# Attained Chisq: 0.539567
+
+giving the parameters of the fit and Chi Squared (not a reduced
+chi-squared). Followed by the fit in a three column data file. The first two
+columns are the two columns of the input file, while the third column is the
+fit of the analytic model. Always check that the fit is good.
+
+Please email me at chris@physics.csustan.edu if you have any questions or
+comments. 

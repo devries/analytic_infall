@@ -1,0 +1,100 @@
+CC = gcc
+LIBS = -lgsl -lgslcblas -lm
+
+OBJS = grow_array.o devo2.o read_data.o
+
+CFLAGS = -g -O -Wall
+
+DESTDIR = /home/cdevries/bin
+
+all: twolayer5_devo twolayer5_simplex twolayer5_hybrid hill5_devo hill5_simplex hill5_hybrid twolayer6_devo twolayer6_simplex twolayer6_hybrid hill7_devo hill7_simplex hill7_hybrid hill6core_devo hill6core_simplex hill6core_hybrid hill6_devo hill6_simplex hill6_hybrid
+	cp noisescript.py $(DESTDIR)
+
+test: ga_test devo2_test read_data_test
+
+ga_test: ga_test.o $(OBJS)
+	$(CC) $(CFLAGS) ga_test.o $(OBJS) $(LIBS) -o $@
+
+devo2_test: devo2_test.o $(OBJS)
+	$(CC) $(CFLAGS) devo2_test.o $(OBJS) $(LIBS) -o $@
+
+read_data_test: read_data_test.o $(OBJS)
+	$(CC) $(CFLAGS) read_data_test.o $(OBJS) $(LIBS) -o $@
+
+twolayer5_devo: twolayer5_devo.o twolayer5.o $(OBJS)
+	$(CC) $(CFLAGS) twolayer5_devo.o twolayer5.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+twolayer5_simplex: twolayer5_simplex.o twolayer5.o $(OBJS)
+	$(CC) $(CFLAGS) twolayer5_simplex.o twolayer5.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+twolayer5_hybrid: twolayer5_hybrid.o twolayer5.o $(OBJS)
+	$(CC) $(CFLAGS) twolayer5_hybrid.o twolayer5.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill5_devo: hill5_devo.o hill5.o $(OBJS)
+	$(CC) $(CFLAGS) hill5_devo.o hill5.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill5_simplex: hill5_simplex.o hill5.o $(OBJS)
+	$(CC) $(CFLAGS) hill5_simplex.o hill5.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill5_hybrid: hill5_hybrid.o hill5.o $(OBJS)
+	$(CC) $(CFLAGS) hill5_hybrid.o hill5.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+twolayer6_devo: twolayer6_devo.o twolayer6.o $(OBJS)
+	$(CC) $(CFLAGS) twolayer6_devo.o twolayer6.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+twolayer6_simplex: twolayer6_simplex.o twolayer6.o $(OBJS)
+	$(CC) $(CFLAGS) twolayer6_simplex.o twolayer6.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+twolayer6_hybrid: twolayer6_hybrid.o twolayer6.o $(OBJS)
+	$(CC) $(CFLAGS) twolayer6_hybrid.o twolayer6.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill7_devo: hill7_devo.o hill7.o $(OBJS)
+	$(CC) $(CFLAGS) hill7_devo.o hill7.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill7_simplex: hill7_simplex.o hill7.o $(OBJS)
+	$(CC) $(CFLAGS) hill7_simplex.o hill7.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill7_hybrid: hill7_hybrid.o hill7.o $(OBJS)
+	$(CC) $(CFLAGS) hill7_hybrid.o hill7.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill6core_devo: hill6core_devo.o hill6core.o $(OBJS)
+	$(CC) $(CFLAGS) hill6core_devo.o hill6core.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill6core_simplex: hill6core_simplex.o hill6core.o $(OBJS)
+	$(CC) $(CFLAGS) hill6core_simplex.o hill6core.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill6core_hybrid: hill6core_hybrid.o hill6core.o $(OBJS)
+	$(CC) $(CFLAGS) hill6core_hybrid.o hill6core.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill6_devo: hill6_devo.o hill6.o $(OBJS)
+	$(CC) $(CFLAGS) hill6_devo.o hill6.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill6_simplex: hill6_simplex.o hill6.o $(OBJS)
+	$(CC) $(CFLAGS) hill6_simplex.o hill6.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+hill6_hybrid: hill6_hybrid.o hill6.o $(OBJS)
+	$(CC) $(CFLAGS) hill6_hybrid.o hill6.o $(OBJS) $(LIBS) -o $@
+	mv $@ $(DESTDIR)
+
+.c.o:
+	$(CC) $(CFLAGS) -c $*.c
+
+clean:
+	rm -f *.o ga_test devo2_test read_data_test

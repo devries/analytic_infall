@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "devo2.h"
+#include "hill5.h"
+
+extern int read_data(FILE *fpin, int ncol, int maxlen, double *retdata[]);
+
+int main(int argc, char *argv[]) {
+  FILE *fpin;
+  FILE *fpout;
+  int popingen;
+  int genpercheck;
+  int checkperconv;
+  double *input_data[2];
+  int nchan;
+  double min[5];
+  double max[5];
+  devo2_struct dstruct;
+  int times_attained;
+  double min_attained;
+  double *model_spectrum;
+  int i;
+  double vmin;
+  double vmax;
+
+  if(argc!=9) {
+    fprintf(stderr, "Usage: %s <inputfilename> <frequency> <vmin> <vmax> <popingeneration> <generationspercheck> <checksperconv> <outputfile>\n", argv[0]);
+    exit(1);
+  }
+
+  popingen = atoi(argv[5]);
+  genpercheck = atoi(argv[6]);
+  checkperconv = atoi(argv[7]);
+  vmin=atof(argv[3]);
+  vmax=atof(argv[4]);
+  fpin = fopen(argv[1],"r");
+  nchan = read_data(fpin,2,132,input_data);
+  fclose(fpin);
+
+  /* tau range */
+  min[0] = 0.1;
+  max[0] = 15.0;
+
+  /* vlsr range */
+  min[1] = vmin+2.0*(vmax-vmin)/6.0;
+  max[1] = vmax-2.0*(vmax-vmin)/6.0;
+
+  /* vin range */
+  min[2] = 0.01;
+  max[2] = (vmax-vmin)/3.0;
+
+  /* sigma range */
+  min[3] = 0.05;
+  max[3] = (vmax-vmin)/3.0;
+
+  /* tpeak range */
+  min[4] = 2.75;
+  max[4] = 50.0;
+
+  hill5_init(nchan,input_data[0],input_data[1],atof(argv[2]),vmin,vmax);
+
+  devo2_init(&dstruct,5,min,max,popingen,0.1,0.8,hill5_evaluate);
+
+  times_attained=1;
+  min_attained=dstruct.best_score;
+
+  printf("Initial Result: %lf\n", dstruct.best_score);
+  while(times_attained<checkperconv) {
+    for(i=0;i<genpercheck;i++) {
+      devo2_step(&dstruct);
+    }
+
+    printf("Attained: %lf\n",dstruct.best_score);
+    printf("tau: %lg, Vlsr: %lg, Vin: %lg,\nsigma: %lg, tpeak: %lg\n", dstruct.best_vector[0], dstruct.best_vector[1], dstruct.best_vector[2], dstruct.best_vector[3], dstruct.best_vector[4]);
+
+    if((min_attained-dstruct.best_score)/min_attained<1.0e-4) {
+      min_attained=dstruct.best_score;
+      times_attained++;
+    }
+    else {
+      min_attained=dstruct.best_score;
+      times_attained=1;
+    }
+  }
+
+  fpout = fopen(argv[8],"w");
+  fprintf(fpout,"# Tau:   %g\n",dstruct.best_vector[0]);
+  fprintf(fpout,"# Vlsr:  %g\n",dstruct.best_vector[1]);
+  fprintf(fpout,"# Vin:   %g\n",dstruct.best_vector[2]);
+  fprintf(fpout,"# sigma: %g\n",dstruct.best_vector[3]);
+  fprintf(fpout,"# Tpeak: %g\n",dstruct.best_vector[4]);
+  fprintf(fpout,"# Attained Chisq: %g\n",dstruct.best_score);
+
+  hill5_evaluate(dstruct.best_vector);
+  model_spectrum = hill5_getfit();
+
+  for(i=0;i<nchan;i++) {
+    fprintf(fpout,"%g\t%g\t%g\n", input_data[0][i],input_data[1][i],model_spectrum[i]);
+  }
+  fclose(fpout);
+
+  devo2_free(&dstruct);
+  hill5_free();
+  free(input_data[0]);
+  free(input_data[1]);
+
+  exit(0);
+}
