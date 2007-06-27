@@ -323,7 +323,7 @@ int main(int argc, char *argv[]) {
       devo2_step(&dstruct);
     }
 
-    printf("Attained: %lf\n",dstruct.best_score);
+    printf("Attained Chi Squared: %lf\n",dstruct.best_score);
     printf("tau: %lg, Vlsr: %lg, Vin: %lg,\nsigma: %lg, tpeak: %lg\n", dstruct.best_vector[0], dstruct.best_vector[1], dstruct.best_vector[2], dstruct.best_vector[3], dstruct.best_vector[4]);
 
 

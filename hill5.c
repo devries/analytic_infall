@@ -114,7 +114,7 @@ double hill5_evaluate(double *params) {
   if(sigma<0.0) {
     return DBL_MAX;
   }
-  if(v_in<0.0) {
+  if(v_in<-NSIG*sigma) { /* used to be v_in<0.0 */
     return DBL_MAX;
   }
   if(v_lsr<lsrrange[0] || v_lsr>lsrrange[1]) {
