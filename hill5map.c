@@ -346,7 +346,7 @@ int main(int argc, char *argv[]) {
   times_attained=1;
   min_attained=dstruct.best_score;
 
-  printf("Initial Result: %lf\n", dstruct.best_score);
+  printf("Initial Chi Squared: %lf\n", dstruct.best_score);
   while(times_attained<checkperconv) {
     for(i=0;i<genpercheck;i++) {
       devo2_step(&dstruct);
@@ -417,7 +417,7 @@ int main(int argc, char *argv[]) {
         gsl_vector_set(step_size_thin,1,0.005);
         gsl_vector_set(step_size_thin,2,0.005);
 
-        s_thin = gsl_multimin_fminimizer_alloc(T,5);
+        s_thin = gsl_multimin_fminimizer_alloc(T,3);
         gsl_multimin_fminimizer_set(s_thin,&minex_func_thin,x_thin,step_size_thin);
 
         k=0;
@@ -478,7 +478,7 @@ int main(int argc, char *argv[]) {
           checkfits(fits_write_pix(vlsrout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,1),&status));
           checkfits(fits_write_pix(vinout,TDOUBLE,fpixel,1,&zero,&status));
           checkfits(fits_write_pix(sigmaout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,2),&status));
-          checkfits(fits_write_pix(tpeakout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,3),&status));
+          checkfits(fits_write_pix(tpeakout,TDOUBLE,fpixel,1,&tex,&status));
           chisq=thinline_gsl(s_thin->x,&tex);
           checkfits(fits_write_pix(chisqout,TDOUBLE,fpixel,1,&chisq,&status));
           model_spectrum=thinline_getfit();
@@ -492,7 +492,7 @@ int main(int argc, char *argv[]) {
             checkfits(fits_write_pix(vlsrout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,1),&status));
             checkfits(fits_write_pix(vinout,TDOUBLE,fpixel,1,&zero,&status));
             checkfits(fits_write_pix(sigmaout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,2),&status));
-            checkfits(fits_write_pix(tpeakout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,3),&status));
+            checkfits(fits_write_pix(tpeakout,TDOUBLE,fpixel,1,&tex,&status));
             chisq=thinline_gsl(s_thin->x,&tex);
             checkfits(fits_write_pix(chisqout,TDOUBLE,fpixel,1,&chisq,&status));
             model_spectrum=thinline_getfit();
