@@ -9,6 +9,8 @@
    4: Tpeak
 */
 
+double get_min_lsr();
+double get_max_lsr();
 void hill5_multicomponent_init(int channels, double *varray, double *tarray, double nu, double vmin, double vmax, int ncomp, double *comp_voff, double *comp_relint);
 void hill5_multicomponent_free();
 double *hill5_multicomponent_getfit();

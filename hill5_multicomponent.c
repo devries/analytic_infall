@@ -29,6 +29,14 @@ static double jfunc(double t, double nu) {
   return to/(exp(to/t)-1.0);
 }
 
+double get_min_lsr() {
+    return lsrrange[0];
+}
+
+double get_max_lsr() {
+    return lsrrange[1];
+}
+
 void hill5_multicomponent_init(int channels, double *varray, double *tarray, double nu, double vmin, double vmax, int ncomp, double *comp_voff, double *comp_relint) {
   int i;
   double vcompmin;
