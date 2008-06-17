@@ -10,7 +10,7 @@
 extern int read_data(FILE *fpin, int ncol, int maxlen, double *retdata[]);
 
 double hill5_gsl(const gsl_vector *x, void *junk) {
-  return hill5_multicomponent_evaluate(x->data);
+  return hill5_evaluate(x->data);
 }
 
 int main(int argc, char *argv[]) {

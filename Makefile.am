@@ -19,6 +19,6 @@ hill7_simplex_SOURCES = hill7_simplex.c hill7.c hill7.h grow_array.h grow_array.
 hill7_hybrid_SOURCES = hill7_hybrid.c hill7.c hill7.h devo2.h devo2.c grow_array.h grow_array.c read_data.c
 hill5map_SOURCES = hill5map.c hill5.c hill5.h devo2.h devo2.c grow_array.h grow_array.c read_data.c thinline.h thinline.c
 hill5_plot_SOURCES = hill5_plot.c hill5.c hill5.h grow_array.h grow_array.c read_data.c
-hill5_multi_hybrid_SOURCES = hill5_multi_hybrid.c hill5_multicomponent.c hill5_multicomponent.h grow_arraw.h grow_array.c read_data.c
+hill5_multi_hybrid_SOURCES = hill5_multi_hybrid.c hill5_multicomponent.c hill5_multicomponent.h devo2.h devo2.c grow_arraw.h grow_array.c read_data.c
 bin_SCRIPTS = noisescript.py noisescript2.py
 EXTRA_DIST = $(bin_SCRIPTS)
