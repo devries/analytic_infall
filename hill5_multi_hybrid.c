@@ -4,6 +4,7 @@
 #include "hill5_multicomponent.h"
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_multimin.h>
+#include <string.h>
 
 #define MAXITER 40000
 
@@ -46,7 +47,7 @@ int main(int argc, char *argv[]) {
   double vmax;
   double vmin;
 
-  if(argc!=9) {
+  if(argc!=10) {
     fprintf(stderr, "Usage: %s <inputfilename> <hyperfinefilename> <frequency> <vmin> <vmax> <popingeneration> <generationspercheck> <checksperconv> <outputfile>\n", argv[0]);
     exit(1);
   }
@@ -115,6 +116,7 @@ int main(int argc, char *argv[]) {
   min[1] = get_min_lsr();
   max[1] = get_max_lsr();
 
+  printf("LSR Velocity Range: %lf to %lf\n", min[1], max[1]);
   devo2_init(&dstruct,5,min,max,popingen,0.2,0.8,hill5_evaluate);
 
   times_attained=1;
