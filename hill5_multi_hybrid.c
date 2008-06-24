@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 
   /* tau range */
   min[0] = 0.1;
-  max[0] = 15.0;
+  max[0] = 30.0;
 
   /* vlsr range */
   /* NEED TO REWORK FOR MULTICOMPONENT */
