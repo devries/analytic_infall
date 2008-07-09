@@ -8,15 +8,25 @@
 
 #define MAXITER 40000
 
-double thinline_gsl(const gsl_vector *x, void *gsl_params) {
+double hfsline_gsl(const gsl_vector *x, void *gsl_params) {
   double params[4];
-  double *tex = (double *)gsl_params; /* Pass tex as extra param */
+  
   params[0]=x->data[0];
   params[1]=x->data[1];
   params[2]=x->data[2];
-  params[3]=*tex; /* give the actual number */
+  params[3]=x->data[3]; 
 
-  return thinline_evaluate(params);
+  return hfsline_evaluate(params);
+}
+
+double hfsthinline_gsl(const gsl_vector *x, void *gsl_params) {
+    double params[4];
+
+    params[0]=x->data[0];
+    params[1]=x->data[1];
+    params[2]=x->data[2];
+
+    return hfsthinline_evaluate(params);
 }
 
 void checkfits(int stat) {
@@ -194,7 +204,7 @@ int main(int argc, char *argv[]) {
   checkfits(fits_update_key(chisqout,TSTRING,"BUNIT","rms","chisq",&status));
 
   /* add history cards to indicate what you did */
-  sprintf(historyline,"--- HILL5 Map Fit ---");
+  sprintf(historyline,"--- HFS Map Fit ---");
   checkfits(fits_write_history(fitsout,historyline,&status));
   checkfits(fits_write_history(tauout,historyline,&status));
   checkfits(fits_write_history(vlsrout,historyline,&status));
@@ -334,7 +344,8 @@ int main(int argc, char *argv[]) {
 
   frequency = atof(argv[2]);
   tex = atof(argv[3]);
-  hill5_init(naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax);
+  /* Need to set up components and put Tex in function below */
+  hfsline_init(naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax,);
 
   devo2_init(&dstruct,5,min,max,popingen,0.2,0.3,hill5_evaluate);
 

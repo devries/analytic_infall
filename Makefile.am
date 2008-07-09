@@ -1,4 +1,4 @@
-bin_PROGRAMS = twolayer5_devo twolayer5_simplex twolayer5_hybrid hill5_devo hill5_simplex hill5_hybrid twolayer6_devo twolayer6_simplex twolayer6_hybrid hill6_devo hill6_simplex hill6_hybrid hill6core_devo hill6core_simplex hill6core_hybrid hill7_devo hill7_simplex hill7_hybrid hill5map hill5_plot hill5_multi_hybrid
+bin_PROGRAMS = twolayer5_devo twolayer5_simplex twolayer5_hybrid hill5_devo hill5_simplex hill5_hybrid twolayer6_devo twolayer6_simplex twolayer6_hybrid hill6_devo hill6_simplex hill6_hybrid hill6core_devo hill6core_simplex hill6core_hybrid hill7_devo hill7_simplex hill7_hybrid hill5map hill5_plot hill5_multi_hybrid hill5map_slow
 twolayer5_devo_SOURCES = twolayer5_devo.c twolayer5.c twolayer5.h devo2.h devo2.c grow_array.h grow_array.c read_data.c
 twolayer5_simplex_SOURCES = twolayer5_simplex.c twolayer5.c twolayer5.h grow_array.h grow_array.c read_data.c
 twolayer5_hybrid_SOURCES = twolayer5_hybrid.c twolayer5.c twolayer5.h devo2.h devo2.c grow_array.h grow_array.c read_data.c
@@ -20,5 +20,6 @@ hill7_hybrid_SOURCES = hill7_hybrid.c hill7.c hill7.h devo2.h devo2.c grow_array
 hill5map_SOURCES = hill5map.c hill5.c hill5.h devo2.h devo2.c grow_array.h grow_array.c read_data.c thinline.h thinline.c
 hill5_plot_SOURCES = hill5_plot.c hill5.c hill5.h grow_array.h grow_array.c read_data.c
 hill5_multi_hybrid_SOURCES = hill5_multi_hybrid.c hill5_multicomponent.c hill5_multicomponent.h devo2.h devo2.c grow_array.h grow_array.c read_data.c
+hill5map_slow_SOURCES = hill5map_slow.c hill5.c hill5.h devo2.h devo2.c grow_array.h grow_array.c read_data.c thinline.h thinline.c
 bin_SCRIPTS = noisescript.py noisescript2.py
 EXTRA_DIST = $(bin_SCRIPTS)
