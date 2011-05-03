@@ -424,10 +424,10 @@ int main(int argc, char *argv[]) {
       }
 
       if(notnoise) {
-        thinline_init(naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax);
+        hyperfine_init(&thin_st,naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax,ncomponents,component_voffs,component_relints);
         gsl_vector_set(x_thin,0,0.1);
         gsl_vector_set(x_thin,1,devo_fit[1]);
-        gsl_vector_set(x_thin,2,devo_fit[3]);
+        gsl_vector_set(x_thin,2,devo_fit[2]);
         gsl_vector_set(step_size_thin,0,0.1);
         gsl_vector_set(step_size_thin,1,0.005);
         gsl_vector_set(step_size_thin,2,0.005);
@@ -448,98 +448,91 @@ int main(int argc, char *argv[]) {
           }
         } while(status_thin==GSL_CONTINUE && k<40000);
 
-        hill5_init(naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax);
+        hyperfine_init(&hyperfine_st,naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax,ncomponents,components_voffs,component_relints);
         
-        gsl_vector_set(x_hill,0,devo_fit[0]);
-        gsl_vector_set(x_hill,1,devo_fit[1]);
-        gsl_vector_set(x_hill,2,devo_fit[2]);
-        gsl_vector_set(x_hill,3,devo_fit[3]);
-        gsl_vector_set(x_hill,4,devo_fit[4]);
-        gsl_vector_set(step_size_hill,0,0.1);
-        gsl_vector_set(step_size_hill,1,0.005);
-        gsl_vector_set(step_size_hill,2,0.005);
-        gsl_vector_set(step_size_hill,3,0.005);
-        gsl_vector_set(step_size_hill,4,0.05);
+        gsl_vector_set(x_hhyperfine,0,devo_fit[0]);
+        gsl_vector_set(x_hyperfine,1,devo_fit[1]);
+        gsl_vector_set(x_hyperfine,2,devo_fit[2]);
+        gsl_vector_set(x_hyperfine,3,devo_fit[3]);
+        gsl_vector_set(step_size_hyperfine,0,0.1);
+        gsl_vector_set(step_size_hyperfine,1,0.005);
+        gsl_vector_set(step_size_hyperfine,2,0.005);
+        gsl_vector_set(step_size_hyperfine,3,0.05);
 
-        s_hill = gsl_multimin_fminimizer_alloc(T,5);
-        gsl_multimin_fminimizer_set(s_hill,&minex_func_hill,x_hill,step_size_hill);
+        s_hyperfine = gsl_multimin_fminimizer_alloc(T,4);
+        gsl_multimin_fminimizer_set(s_hyperfine,&minex_func_hyperfine,x_hyperfine,step_size_hyperfine);
 
         k=0;
         do {
           k++;
-          status_hill=gsl_multimin_fminimizer_iterate(s_hill);
-          if(status_hill) break;
-          size = gsl_multimin_fminimizer_size(s_hill);
-          status_hill = gsl_multimin_test_size(size,eps);
+          status_hyperfine=gsl_multimin_fminimizer_iterate(s_hyperfine);
+          if(status_hyperfine) break;
+          size = gsl_multimin_fminimizer_size(s_hyperfine);
+          status_hyperfine = gsl_multimin_test_size(size,eps);
 
-          if(status_hill == GSL_SUCCESS) {
-            printf("(%d,%d) --- Hill5 converged in %d iterations\n", fpixel[0],fpixel[1],k);
+          if(status_hyperfine == GSL_SUCCESS) {
+            printf("(%d,%d) --- Thick Hyperfine converged in %d iterations\n", fpixel[0],fpixel[1],k);
           }
-        } while(status_hill==GSL_CONTINUE && k<40000);
+        } while(status_hyperfine==GSL_CONTINUE && k<40000);
 
-        if(status_thin!=GSL_SUCCESS && status_hill!=GSL_SUCCESS) {
-          printf("(%d,%d) --- Thin line and Hill5 failed to converge after %d iterations\n", fpixel[0],fpixel[1],k);
+        if(status_thin!=GSL_SUCCESS && status_hyperfine!=GSL_SUCCESS) {
+          printf("(%d,%d) --- Thin and thick hyperfine failed to converge after %d iterations\n", fpixel[0],fpixel[1],k);
           status=0;
           checkfits(fits_write_pixnull(tauout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
           checkfits(fits_write_pixnull(vlsrout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
-          checkfits(fits_write_pixnull(vinout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
           checkfits(fits_write_pixnull(sigmaout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
           checkfits(fits_write_pixnull(texout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
           checkfits(fits_write_pixnull(chisqout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
         }
-        else if(status_hill!=GSL_SUCCESS) {
+        else if(status_hyperfine!=GSL_SUCCESS) {
           status = 0;
           checkfits(fits_write_pix(tauout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,0),&status));
           checkfits(fits_write_pix(vlsrout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,1),&status));
-          checkfits(fits_write_pix(vinout,TDOUBLE,fpixel,1,&zero,&status));
           checkfits(fits_write_pix(sigmaout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,2),&status));
-          checkfits(fits_write_pix(texout,TDOUBLE,fpixel,1,&tex,&status));
-          chisq=thinline_gsl(s_thin->x,&tex);
+          checkfits(fits_write_pix(texout,TDOUBLE,fpixel,1,&tex_thin,&status));
+          chisq=thinline_gsl(s_thin->x,NULL);
           checkfits(fits_write_pix(chisqout,TDOUBLE,fpixel,1,&chisq,&status));
-          model_spectrum=thinline_getfit();
+          model_spectrum=hyperfine_getfit(&thin_st);
         
           checkfits(fits_write_subset(fitsout,TDOUBLE,fpixel,lpixel,model_spectrum,&status));
         }
         else {
-          if(thinline_gsl(s_thin->x,&tex)<hill5_gsl(s_hill->x,NULL)) {
+          if(thinline_gsl(s_thin->x,NULL)<hyperfine_gsl(s_hyperfine->x,NULL)) {
             status = 0;
             checkfits(fits_write_pix(tauout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,0),&status));
             checkfits(fits_write_pix(vlsrout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,1),&status));
-            checkfits(fits_write_pix(vinout,TDOUBLE,fpixel,1,&zero,&status));
             checkfits(fits_write_pix(sigmaout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_thin->x,2),&status));
-            checkfits(fits_write_pix(texout,TDOUBLE,fpixel,1,&tex,&status));
-            chisq=thinline_gsl(s_thin->x,&tex);
+            checkfits(fits_write_pix(texout,TDOUBLE,fpixel,1,&tex_thin,&status));
+            chisq=thinline_gsl(s_thin->x,NULL);
             checkfits(fits_write_pix(chisqout,TDOUBLE,fpixel,1,&chisq,&status));
-            model_spectrum=thinline_getfit();
+            model_spectrum=hyperfine_getfit(&thin_st);
           
             checkfits(fits_write_subset(fitsout,TDOUBLE,fpixel,lpixel,model_spectrum,&status));
           }
           else {
             status = 0;
-            checkfits(fits_write_pix(tauout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hill->x,0),&status));
-            checkfits(fits_write_pix(vlsrout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hill->x,1),&status));
-            checkfits(fits_write_pix(vinout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hill->x,2),&status));
-            checkfits(fits_write_pix(sigmaout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hill->x,3),&status));
-            checkfits(fits_write_pix(texout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hill->x,4),&status));
-            chisq=hill5_gsl(s_hill->x,NULL);
+            checkfits(fits_write_pix(tauout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hyperfine->x,0),&status));
+            checkfits(fits_write_pix(vlsrout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hyperfine->x,1),&status));
+            checkfits(fits_write_pix(sigmaout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hyperfine->x,2),&status));
+            checkfits(fits_write_pix(texout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hyperfine->x,3),&status));
+            chisq=hyperfine_gsl(s_hill->x,NULL);
             checkfits(fits_write_pix(chisqout,TDOUBLE,fpixel,1,&chisq,&status));
-            model_spectrum=hill5_getfit();
+            model_spectrum=hyperfine_getfit(&hyperfine_st);
           
             checkfits(fits_write_subset(fitsout,TDOUBLE,fpixel,lpixel,model_spectrum,&status));
           }
         }
 
         gsl_multimin_fminimizer_free(s_thin);
-        gsl_multimin_fminimizer_free(s_hill);
-        thinline_free();
-        hill5_free();
+        gsl_multimin_fminimizer_free(s_hyperfine);
+        hyperfine_free(&thin_st);
+        hyperfine_free(&hyperfine_st);
       }
       else {
         printf("(%d,%d) --- No Signal\n",fpixel[0],fpixel[1]);
         status=0;
         checkfits(fits_write_pixnull(tauout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
         checkfits(fits_write_pixnull(vlsrout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
-        checkfits(fits_write_pixnull(vinout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
         checkfits(fits_write_pixnull(sigmaout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
         checkfits(fits_write_pixnull(texout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
         checkfits(fits_write_pixnull(chisqout,TDOUBLE,fpixel,1,&nullval,&nullval,&status));
@@ -547,9 +540,9 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  gsl_vector_free(x_hill);
+  gsl_vector_free(x_hyperfine);
   gsl_vector_free(x_thin);
-  gsl_vector_free(step_size_hill);
+  gsl_vector_free(step_size_hyperfine);
   gsl_vector_free(step_size_thin);
 
   free(velocity_spectrum);
@@ -560,7 +553,6 @@ int main(int argc, char *argv[]) {
   checkfits(fits_close_file(fitsout,&status));
   checkfits(fits_close_file(tauout,&status));
   checkfits(fits_close_file(vlsrout,&status));
-  checkfits(fits_close_file(vinout,&status));
   checkfits(fits_close_file(sigmaout,&status));
   checkfits(fits_close_file(texout,&status));
   checkfits(fits_close_file(chisqout,&status));
