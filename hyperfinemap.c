@@ -8,7 +8,7 @@
 #include "fitsio.h"
 #include <string.h>
 
-#define MAXITER 40000
+#define MAXITER 5000
 
 static hyperfine_struct hyperfine_st;
 static hyperfine_struct thin_st;
@@ -446,7 +446,7 @@ int main(int argc, char *argv[]) {
           if(status_thin == GSL_SUCCESS) {
             printf("(%d,%d) --- Thin line converged in %d iterations\n", fpixel[0],fpixel[1],k);
           }
-        } while(status_thin==GSL_CONTINUE && k<40000);
+        } while(status_thin==GSL_CONTINUE && k<MAXITER);
 
         hyperfine_init(&hyperfine_st,naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax,ncomponents,component_voffs,component_relints);
         
@@ -473,7 +473,7 @@ int main(int argc, char *argv[]) {
           if(status_hyperfine == GSL_SUCCESS) {
             printf("(%d,%d) --- Thick Hyperfine converged in %d iterations\n", fpixel[0],fpixel[1],k);
           }
-        } while(status_hyperfine==GSL_CONTINUE && k<40000);
+        } while(status_hyperfine==GSL_CONTINUE && k<MAXITER);
 
         if(status_thin!=GSL_SUCCESS && status_hyperfine!=GSL_SUCCESS) {
           printf("(%d,%d) --- Thin and thick hyperfine failed to converge after %d iterations\n", fpixel[0],fpixel[1],k);

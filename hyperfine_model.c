@@ -57,8 +57,12 @@ void hyperfine_init(hyperfine_struct *st, int channels, double *varray, double *
   }
   vcompint = vcompmax-vcompmin;
   /* CHANGE THESE VALUES */
+  /*
   st->lsrrange[0]=vmin-vcompmin+2.0*(vmax-vmin-vcompint)/6.0;
   st->lsrrange[1]=vmax-vcompmax-2.0*(vmax-vmin-vcompint)/6.0;
+  */
+  st->lsrrange[0]=vmin;
+  st->lsrrange[1]=vmax;
 
   st->n_components = ncomp;
   st->comp_voff_array = comp_voff;
