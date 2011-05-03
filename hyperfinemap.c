@@ -136,14 +136,14 @@ int main(int argc, char *argv[]) {
   sprintf(tauoutname,"!%s-tau.fits",argv[13]);
   sprintf(vlsroutname,"!%s-vlsr.fits",argv[13]);
   sprintf(sigmaoutname,"!%s-sigma.fits",argv[13]);
-  sprintf(texoutname,"!%s-tpeak.fits",argv[13]);
+  sprintf(texoutname,"!%s-tex.fits",argv[13]);
   sprintf(chisqoutname,"!%s-chisq.fits",argv[13]);
 
   checkfits(fits_create_file(&fitsout,fitsoutname,&status));
   checkfits(fits_create_file(&tauout,tauoutname,&status));
   checkfits(fits_create_file(&vlsrout,vlsroutname,&status));
   checkfits(fits_create_file(&sigmaout,sigmaoutname,&status));
-  checkfits(fits_create_file(&texout,tpeakoutname,&status));
+  checkfits(fits_create_file(&texout,texoutname,&status));
   checkfits(fits_create_file(&chisqout,chisqoutname,&status));
 
   checkfits(fits_create_img(fitsout,FLOAT_IMG,3,naxes,&status));
@@ -394,7 +394,7 @@ int main(int argc, char *argv[]) {
 
   x_hyperfine = gsl_vector_alloc(4);
   step_size_hyperfine = gsl_vector_alloc(4);
-  minex_func_hyperfine.f=hillyperfine_gsl;
+  minex_func_hyperfine.f=hyperfine_gsl;
   minex_func_hyperfine.n=4;
   minex_func_hyperfine.params=NULL;
 
@@ -448,9 +448,9 @@ int main(int argc, char *argv[]) {
           }
         } while(status_thin==GSL_CONTINUE && k<40000);
 
-        hyperfine_init(&hyperfine_st,naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax,ncomponents,components_voffs,component_relints);
+        hyperfine_init(&hyperfine_st,naxes[2],velocity_spectrum,input_spectrum,frequency,vmin,vmax,ncomponents,component_voffs,component_relints);
         
-        gsl_vector_set(x_hhyperfine,0,devo_fit[0]);
+        gsl_vector_set(x_hyperfine,0,devo_fit[0]);
         gsl_vector_set(x_hyperfine,1,devo_fit[1]);
         gsl_vector_set(x_hyperfine,2,devo_fit[2]);
         gsl_vector_set(x_hyperfine,3,devo_fit[3]);
@@ -515,7 +515,7 @@ int main(int argc, char *argv[]) {
             checkfits(fits_write_pix(vlsrout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hyperfine->x,1),&status));
             checkfits(fits_write_pix(sigmaout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hyperfine->x,2),&status));
             checkfits(fits_write_pix(texout,TDOUBLE,fpixel,1,gsl_vector_ptr(s_hyperfine->x,3),&status));
-            chisq=hyperfine_gsl(s_hill->x,NULL);
+            chisq=hyperfine_gsl(s_hyperfine->x,NULL);
             checkfits(fits_write_pix(chisqout,TDOUBLE,fpixel,1,&chisq,&status));
             model_spectrum=hyperfine_getfit(&hyperfine_st);
           

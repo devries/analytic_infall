@@ -82,12 +82,12 @@ double hyperfine_model(hyperfine_struct *st, double tau,double v_lsr, double sig
   resrms=0.0;
   for(i=0;i<st->nchan;i++) {
     tauc=0.0;
-    for(j=0;j<n_components;j++) {
+    for(j=0;j<st->n_components;j++) {
 
-      tauc += tau*st->comp_relint_array[j]*exp(-pow((st->velocity_array[i]-v_lsr-comp_voff_array[j])/sigma,2.0)/2.0);
+      tauc += tau*st->comp_relint_array[j]*exp(-pow((st->velocity_array[i]-v_lsr-st->comp_voff_array[j])/sigma,2.0)/2.0);
     }
 
-    st->hyperfine_array[i]=(jfunc(tex,st->frequency)-jfunc(TBG,frequency))*(1.0-exp(-tauc));
+    st->hyperfine_array[i]=(jfunc(tex,st->frequency)-jfunc(TBG,st->frequency))*(1.0-exp(-tauc));
     resid=st->temperature_array[i]-st->hyperfine_array[i];
     if(st->velocity_array[i]>st->vrange[0] && st->velocity_array[i]<st->vrange[1]) {
       resrms+=resid*resid;
@@ -124,7 +124,7 @@ double hyperfine_evaluate(hyperfine_struct *st, double *params) {
     return DBL_MAX;
   }
 
-  resrms = hyperfine_model(st,tau,v_lsr,v_in,sigma,tex);
+  resrms = hyperfine_model(st,tau,v_lsr,sigma,tex);
 
   return resrms;
 }
