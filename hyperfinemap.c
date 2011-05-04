@@ -318,6 +318,14 @@ int main(int argc, char *argv[]) {
   }
   token = strtok(line, " \f\n\r\t\v");
   ncomponents = atoi(token);
+  sprintf(historyline,"  %d hyperfine components",ncomponents);
+  checkfits(fits_write_history(fitsout,historyline,&status));
+  checkfits(fits_write_history(tauout,historyline,&status));
+  checkfits(fits_write_history(vlsrout,historyline,&status));
+  checkfits(fits_write_history(sigmaout,historyline,&status));
+  checkfits(fits_write_history(texout,historyline,&status));
+  checkfits(fits_write_history(chisqout,historyline,&status));
+
   component_voffs = malloc(ncomponents*sizeof(double));
   component_relints = malloc(ncomponents*sizeof(double));
   if(component_voffs == NULL || component_relints == NULL) {
@@ -333,6 +341,13 @@ int main(int argc, char *argv[]) {
       component_voffs[i] = atof(token);
       token = strtok(NULL, " \f\n\r\t\v");
       component_relints[i] = atof(token);
+      sprintf(historyline,"  Component %d: Voff= %f, Rel. Intensity= %f", i, component_voffs[i], component_relints[i]);
+      checkfits(fits_write_history(fitsout,historyline,&status));
+      checkfits(fits_write_history(tauout,historyline,&status));
+      checkfits(fits_write_history(vlsrout,historyline,&status));
+      checkfits(fits_write_history(sigmaout,historyline,&status));
+      checkfits(fits_write_history(texout,historyline,&status));
+      checkfits(fits_write_history(chisqout,historyline,&status));
   }
   fclose(fpin);
 
