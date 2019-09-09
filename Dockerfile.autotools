@@ -1,0 +1,10 @@
+FROM ubuntu:18.04
+
+RUN apt-get update && apt-get install -y build-essential autotools-dev autoconf libgsl0-dev libcfitsio-dev
+ADD . /app
+WORKDIR /app
+
+RUN aclocal && autoconf && automake -a
+RUN ./configure && make && make install
+
+CMD bash
